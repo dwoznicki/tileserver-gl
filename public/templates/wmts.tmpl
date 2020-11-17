@@ -36,8 +36,8 @@
     </ows:Operation>
   </ows:OperationsMetadata>
   <Contents>
-      <Layer>
-      <ows:Title>{{name}}</ows:Title>
+    <Layer>
+      <ows:Title>{{name}}-256</ows:Title>
       <ows:Identifier>{{id}}</ows:Identifier>
       <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
         <ows:LowerCorner>-180 -85.051128779807</ows:LowerCorner>
@@ -50,8 +50,25 @@
       <TileMatrixSetLink>
         <TileMatrixSet>GoogleMapsCompatible</TileMatrixSet>
       </TileMatrixSetLink>
-      <ResourceURL format="image/png" resourceType="tile" template="{{baseUrl}}/styles/{{id}}/{TileMatrix}/{TileCol}/{TileRow}.png{{key_query}}"/>
-    </Layer><TileMatrixSet>
+      <ResourceURL format="image/png" resourceType="tile" template="{{baseUrl}}/styles/{{id}}/256/{TileMatrix}/{TileCol}/{TileRow}.png{{key_query}}"/>
+    </Layer>
+    <Layer>
+      <ows:Title>{{name}}-512</ows:Title>
+      <ows:Identifier>{{id}}</ows:Identifier>
+      <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+        <ows:LowerCorner>-180 -85.051128779807</ows:LowerCorner>
+        <ows:UpperCorner>180 85.051128779807</ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+      <Style isDefault="true">
+        <ows:Identifier>default</ows:Identifier>
+      </Style>
+      <Format>image/png</Format>
+      <TileMatrixSetLink>
+        <TileMatrixSet>GoogleMapsCompatible</TileMatrixSet>
+      </TileMatrixSetLink>
+      <ResourceURL format="image/png" resourceType="tile" template="{{baseUrl}}/styles/{{id}}/512/{TileMatrix}/{TileCol}/{TileRow}.png{{key_query}}"/>
+    </Layer>
+    <TileMatrixSet>
       <ows:Title>GoogleMapsCompatible</ows:Title>
       <ows:Abstract>GoogleMapsCompatible EPSG:3857</ows:Abstract>
       <ows:Identifier>GoogleMapsCompatible</ows:Identifier>
