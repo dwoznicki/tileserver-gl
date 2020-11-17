@@ -50,7 +50,7 @@ module.exports.getTileUrls = (req, domains, path, format, publicUrl, aliases) =>
   }
 
   let tileParams = '{z}/{x}/{y}';
-  if (['png', 'jpeg', 'webp'].includes(format)) {
+  if (['png', 'jpg', 'jpeg', 'webp'].includes(format)) {
     tileParams = '256/{z}/{x}/{y}';
   }
 
