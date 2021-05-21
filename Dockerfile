@@ -16,7 +16,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-COPY . /usr/src/app
+COPY package.json /usr/src/app/package.json
 
 ENV NODE_ENV="production"
 
@@ -46,7 +46,9 @@ RUN apt install ./libjpeg-turbo8_2.0.3-0ubuntu1_amd64.deb
 RUN curl http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2_amd64.deb --output libicu66_66.1-2ubuntu2_amd64.deb
 RUN apt install ./libicu66_66.1-2ubuntu2_amd64.deb
 
-COPY --from=builder /usr/src/app /app
+RUN mkdir /app
+COPY --from=builder /usr/src/app/node_modules /app/node_modules
+COPY . /app
 
 ENV NODE_ENV="production"
 ENV CHOKIDAR_USEPOLLING=1
