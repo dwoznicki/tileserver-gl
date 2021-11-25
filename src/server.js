@@ -106,7 +106,7 @@ function start(opts) {
   })
 
   if (opts.cors) {
-    app.use(cors());
+    app.use(cors({origin: true}));
   }
 
   app.use('/data/', serve_data.init(options, serving.data));
