@@ -100,6 +100,11 @@ function start(opts) {
 
   const data = clone(config.data || {});
 
+  app.use((req, res, next) => {
+    req.serviceProtocol = opts.forceHttps ? 'https' : req.protocol
+    next()
+  })
+
   if (opts.cors) {
     app.use(cors());
   }
@@ -419,7 +424,7 @@ function start(opts) {
     }
     wmts.id = id;
     wmts.name = (serving.styles[id] || serving.rendered[id]).name;
-    wmts.baseUrl = `${req.get('X-Forwarded-Protocol') ? req.get('X-Forwarded-Protocol') : req.protocol}://${req.get('host')}`;
+    wmts.baseUrl = `${req.get('X-Forwarded-Protocol') ? req.get('X-Forwarded-Protocol') : req.serviceProtocol}://${req.get('host')}`;
     return wmts;
   });
 

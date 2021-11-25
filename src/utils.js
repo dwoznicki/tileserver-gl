@@ -7,7 +7,7 @@ const clone = require('clone');
 const glyphCompose = require('@mapbox/glyph-pbf-composite');
 
 
-module.exports.getPublicUrl = (publicUrl, req) => publicUrl || `${req.protocol}://${req.headers.host}/`;
+module.exports.getPublicUrl = (publicUrl, req) => publicUrl || `${req.serviceProtocol}://${req.headers.host}/`;
 
 module.exports.getTileUrls = (req, domains, path, format, publicUrl, aliases) => {
 
@@ -54,7 +54,7 @@ module.exports.getTileUrls = (req, domains, path, format, publicUrl, aliases) =>
   const uris = [];
   if (!publicUrl) {
     for (const domain of domains) {
-      uris.push(`${req.protocol}://${domain}/${path}/{z}/{x}/{y}.${format}${query}`);
+      uris.push(`${req.serviceProtocol}://${domain}/${path}/{z}/{x}/{y}.${format}${query}`);
     }
   } else {
     uris.push(`${publicUrl}${path}/{z}/{x}/{y}.${format}${query}`)

@@ -41,6 +41,10 @@ const opts = require('commander')
     parseInt
   )
   .option(
+    '--force-https',
+    'Force HTTPS in responses'
+  )
+  .option(
     '-C|--no-cors',
     'Disable Cross-origin resource sharing headers'
   )
@@ -87,7 +91,8 @@ const startServer = (configPath, config) => {
     silent: opts.silent,
     logFile: opts.log_file,
     logFormat: opts.log_format,
-    publicUrl: publicUrl
+    publicUrl: publicUrl,
+    forceHttps: opts.forceHttps
   });
 };
 
