@@ -4,14 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{name}} - TileServer GL</title>
+  {{#is_vector}}
   <link rel="stylesheet" type="text/css" href="{{public_url}}maplibre-gl.css{{&key_query}}" />
   <link rel="stylesheet" type="text/css" href="{{public_url}}maplibre-gl-inspect.css{{&key_query}}" />
-  <link rel="stylesheet" type="text/css" href="{{public_url}}leaflet.css{{&key_query}}" />
   <script src="{{public_url}}maplibre-gl.js{{&key_query}}"></script>
   <script src="{{public_url}}maplibre-gl-inspect.min.js{{&key_query}}"></script>
+  {{/is_vector}}
+  {{^is_vector}}
+  <link rel="stylesheet" type="text/css" href="{{public_url}}leaflet.css{{&key_query}}" />
   <script src="{{public_url}}leaflet.js{{&key_query}}"></script>
   <script src="{{public_url}}leaflet-hash.js{{&key_query}}"></script>
   <script src="{{public_url}}L.TileLayer.NoGap.js{{&key_query}}"></script>
+  {{/is_vector}}
   <style>
     body { margin:0; padding:0; }
     #map { position:absolute; top:0; bottom:0; width:100%; }
