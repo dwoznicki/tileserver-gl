@@ -16,7 +16,7 @@ module.exports = {
   init: (options, repo) => {
     const app = express().disable('x-powered-by');
 
-    app.get('/:id/:z(\\d+)/:x(\\d+)/:y(\\d+).:format([\\w.]+)', (req, res, next) => {
+    app.get('/:id/:tileSize(256|512)/:z(\\d+)/:x(\\d+)/:y(\\d+).:format([\\w.]+)', (req, res, next) => {
       const item = repo[req.params.id];
       if (!item) {
         return res.sendStatus(404);
