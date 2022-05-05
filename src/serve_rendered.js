@@ -18,7 +18,7 @@ const Color = require('color');
 const express = require('express');
 const mercator = new (require('@mapbox/sphericalmercator'))();
 const mlgl = require('@acalcutt/maplibre-gl-native');
-const MBTiles = require('@mapbox/mbtiles');
+const MBTiles = require('@mapwhit/mbtiles');
 const proj4 = require('proj4');
 const request = require('request');
 

@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const request = require('request');
 
-const MBTiles = require('@mapbox/mbtiles');
+const MBTiles = require('@mapwhit/mbtiles');
 
 const packageJson = require('../package');
 
