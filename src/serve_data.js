@@ -30,33 +30,30 @@ export const serve_data = {
         format = 'pbf';
       }
       if (format !== tileJSONFormat &&
-        !(format === 'geojson' && tileJSONFormat === 'pbf')) {
+          !(format === 'geojson' && tileJSONFormat === 'pbf')) {
         return res.status(404).send('Invalid format');
       }
       if (z < item.tileJSON.minzoom || 0 || x < 0 || y < 0 ||
-        z > item.tileJSON.maxzoom ||
-        x >= Math.pow(2, z) || y >= Math.pow(2, z)) {
+          z > item.tileJSON.maxzoom ||
+          x >= Math.pow(2, z) || y >= Math.pow(2, z)) {
         return res.status(404).send('Out of bounds');
       }
-      const {
-        tile: data,
-        headers,
-        error: err
-      } = item.source.getTile(z, x, y);
-      let isGzipped;
-      if (err) {
-        if (/does not exist/.test(err.message)) {
-          return res.status(204).send();
+      item.source.getTile(z, x, y, (err, data, headers) => {
+        let isGzipped;
+        if (err) {
+          if (/does not exist/.test(err.message)) {
+            return res.status(204).send();
+          } else {
+            return res.status(500).send(err.message);
+          }
         } else {
-          return res.status(500).send(err.message);
-        }
-      } else {
-        if (data == null) {
-          return res.status(404).send('Not found');
-        } else {
-          if (tileJSONFormat === 'pbf') {
-            isGzipped = data.slice(0, 2).indexOf(
-              Buffer.from([0x1f, 0x8b])) === 0;
+          if (data == null) {
+            return res.status(404).send('Not found');
+          } else {
+            if (tileJSONFormat === 'pbf') {
+              isGzipped = data.slice(0, 2).indexOf(
+                  Buffer.from([0x1f, 0x8b])) === 0;
+              if (options.dataDecoratorFunc) {
                 if (isGzipped) {
                   data = zlib.unzipSync(data);
                   isGzipped = false;
@@ -68,6 +65,12 @@ export const serve_data = {
               headers['Content-Type'] = 'application/x-protobuf';
             } else if (format === 'geojson') {
               headers['Content-Type'] = 'application/json';
+
+              if (isGzipped) {
+                data = zlib.unzipSync(data);
+                isGzipped = false;
+              }
+
               const tile = new VectorTile(new Pbf(data));
               const geojson = {
                 'type': 'FeatureCollection',
@@ -84,45 +87,19 @@ export const serve_data = {
               }
               data = JSON.stringify(geojson);
             }
-          }
-          if (format === 'pbf') {
-            headers['Content-Type'] = 'application/x-protobuf';
-          } else if (format === 'geojson') {
-            headers['Content-Type'] = 'application/json';
+            delete headers['ETag']; // do not trust the tile ETag -- regenerate
+            headers['Content-Encoding'] = 'gzip';
+            res.set(headers);
 
-            if (isGzipped) {
-              data = zlib.unzipSync(data);
-              isGzipped = false;
+            if (!isGzipped) {
+              data = zlib.gzipSync(data);
+              isGzipped = true;
             }
 
-            const tile = new VectorTile(new Pbf(data));
-            const geojson = {
-              "type": "FeatureCollection",
-              "features": []
-            };
-            for (let layerName in tile.layers) {
-              const layer = tile.layers[layerName];
-              for (let i = 0; i < layer.length; i++) {
-                const feature = layer.feature(i);
-                const featureGeoJSON = feature.toGeoJSON(x, y, z);
-                featureGeoJSON.properties.layer = layerName;
-                geojson.features.push(featureGeoJSON);
-              }
-            }
-            data = JSON.stringify(geojson);
+            return res.status(200).send(data);
           }
-          delete headers['ETag']; // do not trust the tile ETag -- regenerate
-          headers['Content-Encoding'] = 'gzip';
-          res.set(headers);
-
-          if (!isGzipped) {
-            data = zlib.gzipSync(data);
-            isGzipped = true;
-          }
-
-          return res.status(200).send(data);
         }
-      }
+      });
     });
 
     app.get('/:id.json', (req, res, next) => {
@@ -165,7 +142,7 @@ export const serve_data = {
       delete tileJSON['scheme'];
 
       Object.assign(tileJSON, params.tilejson || {});
-      utils.fixTileJSONCenter(tileJSON);
+      fixTileJSONCenter(tileJSON);
 
       if (options.dataDecoratorFunc) {
         tileJSON = options.dataDecoratorFunc(id, 'tilejson', tileJSON);
